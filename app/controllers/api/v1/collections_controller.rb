@@ -4,18 +4,21 @@ class Api::V1::CollectionsController < ApplicationController
 
   def index
     collections = Collection.all.order(created_at: :desc)
-    json_response "Collections Loaded Successfully", true, {collections: collections}, :ok
+    collection_serializer = parse_json(collections)
+    json_response "Collections Loaded Successfully", true, {collections: collection_serializer}, :ok
   end
 
   def show
-    json_response "Collection Loaded Successfully", true, {collection: @collection}, :ok
+    collection_serializer = parse_json(@collection)
+    json_response "Collection Loaded Successfully", true, {collection: collection_serializer}, :ok
   end
 
   def create
     collection = Collection.create(collection_params)
     collection.user_id = current_user.id
     if collection.save
-      json_response "Collection created Successfully", true, {collection: collection}, :ok
+      collection_serializer = parse_json(collection)
+      json_response "Collection created Successfully", true, {collection: collection_serializer}, :ok
     else
       json_response "Collection not created", false, {}, :unprocessable_entity
     end
@@ -24,7 +27,8 @@ class Api::V1::CollectionsController < ApplicationController
   def update
     if correct_user(@collection.user)
       if @collection.update(collection_params)
-        json_response "Collection updated", true, {collection: @collection}, :ok
+        collection_serializer = parse_json(@collection)
+        json_response "Collection updated", true, {collection: collection_serializer}, :ok
       else
         json_response "Collection not updated", false, {}, :unprocessable_entity
       end
@@ -36,7 +40,7 @@ class Api::V1::CollectionsController < ApplicationController
   def destroy
     if correct_user @collection.user
       if @collection.destroy
-        json_response "Collection delected successfully", true, {collection: @collection}, :ok
+        json_response "Collection delected successfully", true, {}, :ok
       else
         json_response "Collection was not destroyed", false, {}, :unprocessable_entity
       end

@@ -6,13 +6,17 @@ Rails.application.routes.draw do
     namespace :v1 do
       devise_scope :user do
         post "sign_up" => "registrations#create"
-        get "users" => "registrations#index"
-        get "users/:id" => "registrations#show"
-        post "sign_in" => "sessions#create"
+        post "sign_in" =>  "sessions#create"
         delete "sign_off" => "sessions#destroy"
       end
-      #routes for collection controller
 
+      #routes for users controller
+      get "users" => "users#index"
+      get "users/:id" => "users#show"
+      put "users/:id" => "users#update"
+      patch "users/:id" =>  "users#update"
+
+      #routes for collection controller
       get "collections" => "collections#index"
       get "collections/:id" => "collections#show"
       post "collections"  => "collections#create"

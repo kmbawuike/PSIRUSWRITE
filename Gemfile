@@ -19,6 +19,9 @@ gem 'puma', '~> 3.11'
 # Use Devise for creating and authenticating users
 gem 'devise'
 
+#Carrierwave for uploading images(files)
+gem 'carrierwave'
+
 # Use simple_token_authentication for generating token
 gem 'simple_token_authentication', '~>1.0'
 

@@ -5,11 +5,13 @@ class Api::V1::CommentsController < ApplicationController
 
   def index
     @comments = @article.comments
-    json_response "Comments Loaded", true, {comments: @comments}, :ok
+    comment_serializer = parse_json(@comments)
+    json_response "Comments Loaded", true, {comments: comment_serializer}, :ok
   end
 
   def show
-    json_response "Comment loaded", true, {comment: @comment}, :ok
+    comment_serializer = parse_json(@comment)
+    json_response "Comment loaded", true, {comment: comment_serializer}, :ok
   end
 
   def create
@@ -17,7 +19,8 @@ class Api::V1::CommentsController < ApplicationController
     comment.article_id = params[:article_id]
     comment.user_id = current_user.id
     if comment.save
-      json_response "Comment created Sucessfully", true, {comment: comment}, :ok
+      comment_serializer = parse_json(comment)
+      json_response "Comment created Sucessfully", true, {comment: comment_serializer}, :ok
     else
       json_response "Comment was not created", false, {}, :unprocessable_entity
     end

@@ -1,11 +1,10 @@
 class User < ApplicationRecord
-  has_many :collections
-  has_many :articles
+  mount_uploader :profile_picture, ProfilePictureUploader
+  has_many :collections, dependent: :destroy
+  has_many :articles, dependent: :destroy
+  has_many :comments, dependent: :destroy
   acts_as_token_authenticatable
-  validates :email, presence: true
-  validates :password, presence: true
-  validates :password_confirmation, presence: true
-
+  #Remember to run validation on the front end forms
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,

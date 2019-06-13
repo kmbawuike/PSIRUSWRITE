@@ -1,19 +1,20 @@
 class Api::V1::ArticlesController < ApplicationController
   before_action :load_collection,only:[:index, :create]
   before_action :load_article,only:[:show,:update,:destroy]
-#  before_action :ensure_correct_user_for_collection, only:[:create]
   before_action :authenticate_with_token!,only:[:create,:update,:destroy]
 
 
 
   def index
     @articles = @collection.articles
-    json_response "Articles loaded Sucessfully", true, {articles: @articles}, :ok
+    article_serializer = parse_json(@articles)
+    json_response "Articles loaded Sucessfully", true, {articles: article_serializer}, :ok
 
   end
 
   def show
-    json_response "Article loaded Sucessfully", true, {article: @article}, :ok
+    article_serializer = parse_json(@article)
+    json_response "Article loaded Sucessfully", true, {article: article_serializer}, :ok
   end
 
   def create
@@ -22,7 +23,8 @@ class Api::V1::ArticlesController < ApplicationController
     article.collection_id = params[:collection_id]
     if @collection.user.id == article.user_id
       if article.save
-        json_response "Article created Successfully", true, {article: article}, :ok
+        article_serializer = parse_json(article)
+        json_response "Article created Successfully", true, {article: article_serializer}, :ok
       else
         json_response "Article not created", false, {}, :unprocessable_entity
       end
@@ -35,7 +37,8 @@ class Api::V1::ArticlesController < ApplicationController
   def update
     if correct_user(@article.user)
       if @article.update(article_params)
-        json_response "Article updated Sucessfully", true, {article: @article}, :ok
+        article_serializer = parse_json(@article)
+        json_response "Article updated Sucessfully", true, {article: article_serializer}, :ok
       else
         json_response "Article was not updated", false, {}, :unprocessable_entity
       end
@@ -47,7 +50,7 @@ class Api::V1::ArticlesController < ApplicationController
   def destroy
     if correct_user(@article.user)
       if @article.destroy
-        json_response "Article destroyed Sucessfully", true, {article: @article}, :ok
+        json_response "Article destroyed Sucessfully", true, {}, :ok
       else
         json_response "Article was not deleted", false, {}, :unprocessable_entity
       end
@@ -72,16 +75,7 @@ class Api::V1::ArticlesController < ApplicationController
   end
 
   def article_params
-    params.require(:article).permit(:title, :image, :body)
+    params.require(:article).permit(:title, :image, :body, :article_image)
   end
-
-  #def ensure_correct_user_for_collection #ensuring the coorect user that has the collection creates an article on the collection
-  #  @collection = Collection.find_by(id: params[:id])
-  #  unless @collection.user_id == current_user.id
-  #    return json_response "Unauthorized User", false, {}, :unauthorized
-  #  end
-#  end
-
-
 
 end
