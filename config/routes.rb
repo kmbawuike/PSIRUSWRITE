@@ -1,10 +1,11 @@
 Rails.application.routes.draw do
 
+  root "welcome#welcome"
+  
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
-      root :to => "welcome#welcome"
       devise_scope :user do
         post "sign_up" => "registrations#create"
         post "sign_in" =>  "sessions#create"
